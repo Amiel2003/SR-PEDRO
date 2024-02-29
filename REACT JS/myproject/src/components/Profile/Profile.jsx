@@ -177,9 +177,9 @@ function Profile({ user, hiredDate }) {
                             </div>
                         </div>
                         <br></br>
-                        <div className="card mb-3">
+                        {/* <div className="card mb-3">
                             <RandomQuote />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
