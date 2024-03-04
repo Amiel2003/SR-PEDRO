@@ -28,12 +28,12 @@ export const SidebarData = [
     heading: "Dashboard",
     link: "/dashboard"
   },
-  {
-    roles: ["admin"],
-    icon: UilBuilding,
-    heading: "Branches",
-    link: "/branches"
-  },
+  // {
+  //   roles: ["admin"],
+  //   icon: UilBuilding,
+  //   heading: "Branches",
+  //   link: "/branches"
+  // },
   {
     roles: ["admin", "supervisor"],
     icon: UilUsersAlt,
