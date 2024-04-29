@@ -7,6 +7,7 @@ import CryptoJS from 'crypto-js';
 import './BranchDetails.css'
 import './ProductDetails.css'
 import BounceLoader from 'react-spinners/BarLoader'
+import BarLoader from 'react-spinners/BarLoader';
 import { UilPen, UilPlus, UilTrash, UilCheck, UilX } from "@iconscout/react-unicons";
 
 function ProductDetails({ id }) {
@@ -16,6 +17,15 @@ function ProductDetails({ id }) {
   const [productPrice, setProductPrice] = useState(0)
   const [productDescription, setProductDescription] = useState('')
   const [loading, setLoading] = useState(true)
+  const [editLoading, setEditLoading] = useState(false)
+
+  const [isEditProductName, setIsEditProductName] = useState(false)
+  const [isEditProductDescription, setIsEditDescription] = useState(false)
+  const [isEditProductPrice, setIsEditProductPrice] = useState(false)
+
+  const [newProductName, setNewProductName] = useState('')
+  const [newProductPrice, setNewProductPrice] = useState(0)
+  const [newProductDescription, setNewProductDescription] = useState('')
 
   const ProductURL = process.env.REACT_APP_PRODUCTS_URL + '/' + id;
   const secretKey = process.env.REACT_APP_CRYPTOJS_SECRET_KEY;
@@ -42,6 +52,58 @@ function ProductDetails({ id }) {
         console.error('Error getting product by id: ', id)
       })
   };
+
+  function handleEditChange(param, func, e) {
+    e.preventDefault();
+    switch (param) {
+      case 'productName':
+        (func === 'edit') ? setIsEditProductName(true) : (func === 'save') ? saveProduct(newProductName, 'product_name', setProductName, setIsEditProductName) : setIsEditProductName(false);
+        break;
+      default:
+    }
+  }
+
+  function saveProduct(value, param, func, editFunc){
+    console.log('sdfjhsdfjsdfj')
+      try {
+        setEditLoading(true)
+        const json = {
+          _id: productID,
+          value: value,
+          attribute: param,
+        }
+        axios.post("http://localhost:5000/products/edit/this", { data: json })
+        .then((res) => {
+          // if (res.data.status !== 200) {
+          //   if (res.data.message === 'Email already in use') {
+          //     setErrorMessage(res.data.message)
+          //     setEditLoading(false)
+          //   } else {
+          //     editFunc(false)
+          //     func(value)
+          //     setEditLoading(false)
+          //   }
+          // } else {
+          //   setErrorMessage(res.data.message)
+          // }
+        })
+        .catch((error) => { console.error('Error updating product: ', error) })
+      } catch (error) {
+        console.error('Something went wrong while sending update data: ', error)
+      }
+  }
+
+  function archiveProduct(id, e){
+    e.preventDefault()
+    try {
+      axios.post("http://localhost:5000/products/archive",{id:id})
+      .then((res) => {
+        
+      })
+    } catch (error) {
+      console.error('Error archiving employee')
+    }
+  }
 
   return (
     <div>
@@ -71,7 +133,27 @@ function ProductDetails({ id }) {
             color="blue" />
           ):(
              <div className="product-details-container">
-            <h3 className="product-title">{productName}</h3>
+            
+            { isEditProductName === false ? (
+              <div className='product-deets'>
+              <div><h3 className="product-title">{productName}</h3></div>
+              <div className='product-pen'><UilPen size='18' onClick={(e) => handleEditChange('productName', 'edit', e)}/></div>
+            </div>
+            ):(
+              <div className='product-deets'>
+                <div><input type="text" onChange={(e) => setNewProductName(e.target.value)} className='form-control edit-employee' placeholder='Product Name'/></div>
+                {editLoading === false ? (
+                                <div className='product-deets'>
+                                  <div><UilX size='22' color='red' onClick={(e) => handleEditChange('productName', 'cancel', e)} /></div>
+                                  <div className=''><UilCheck size='24' color='green' onClick={(e) => handleEditChange('productName', 'save', e)} /></div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <BarLoader width={'25px'} color='green' />
+                                </div>
+                              )}
+              </div>
+            )}
             <p className="product-description">{productDescription}</p>
             <h4 className="price">
               <span>₱{productPrice}</span>
@@ -84,6 +166,14 @@ function ProductDetails({ id }) {
             </div>
           </div>
           )}
+
+<MuiButton
+                    variant="contained"
+                    color="error"
+                    className='btn-edit'
+                    onClick={(e) => archiveProduct(productID, e)}
+                  >Archive Product
+                  </MuiButton>
          
 
         </Modal.Body>

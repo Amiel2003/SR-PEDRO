@@ -14,3 +14,11 @@
 .product-description {
     flex-grow: 1;
 }
+
+.product-deets{
+    display: flex;
+}
+
+.product-pen{
+    margin-left: 10px;
+}

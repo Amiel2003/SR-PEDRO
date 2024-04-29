@@ -10,7 +10,11 @@ const ProductsSchema = new Schema({
     date_added: {
         type: Date,
         default: Date.now // Set the default value to the current date
-    }
+    },
+    archived: {
+        type: Boolean,
+        default: false
+      }
 });
 
 const Product = mongoose.model('Product', ProductsSchema, 'Products');
